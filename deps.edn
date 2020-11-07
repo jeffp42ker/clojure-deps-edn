@@ -99,6 +99,10 @@
   ;; clojure -X:project/new :template app :name practicalli/my-application
   ;; clojure -X:project/new :template luminus :name practicalli/full-stack-app +http-kit +h2 +reagent +auth
 
+  ;; clj-new readme examples
+  ;; clojure -X:new-app :name myname/myapp
+  ;; clojure -X:new-lib :name myname/mylib
+
   :project/new
   {:extra-deps {seancorfield/clj-new {:mvn/version "1.1.226"}}
    :exec-fn    clj-new/create
@@ -110,6 +114,16 @@
   {:extra-deps {seancorfield/clj-new {:mvn/version "1.1.226"}}
    :exec-fn    clj-new/generate
    :main-opts  ["-m" "clj-new.generate"]}
+
+  :new-app
+  {:extra-deps {seancorfield/clj-new {:mvn/version "1.1.228"}}
+   :exec-fn clj-new/create
+   :exec-args {:template "app"}}
+
+   :new-lib
+  {:extra-deps {seancorfield/clj-new {:mvn/version "1.1.228"}}
+   :exec-fn clj-new/create
+   :exec-args {:template "lib"}}
 
   ;; End of: Creating projects from templates
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
