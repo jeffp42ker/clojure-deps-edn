@@ -371,25 +371,26 @@
   ;; https://github.com/djblue/portal
 
   :inspect/portal-cli
-  {:extra-deps {djblue/portal {:mvn/version "0.6.3"}}}
+  {:extra-deps {djblue/portal {:mvn/version "0.6.4"}}}
 
   :inspect/portal-web
-  {:extra-deps {djblue/portal             {:mvn/version "0.6.3"}
+  {:extra-deps {djblue/portal             {:mvn/version "0.6.4"}
                 org.clojure/clojurescript {:mvn/version "1.10.773"}}
    :main-opts  ["-m" "cljs.main"]}
 
   :inspect/portal-node
-  {:extra-deps {djblue/portal             {:mvn/version "0.6.3"}
+  {:extra-deps {djblue/portal             {:mvn/version "0.6.4"}
                 org.clojure/clojurescript {:mvn/version "1.10.773"}}
    :main-opts  ["-m" "cljs.main" "-re" "node"]}
 
 
   ;; REBL Data browser
-  ;; https://github.com/cognitect-labs/REBL-distro
+  ;; http://practicalli.github.io/clojure/alternative-tools/clojure-tools/cognitect-rebl.html
   ;; Requires Clojure 1.10 or greater
-  ;; Requrires Cognitect dev-tools https://cognitect.com/dev-tools/index.html
-  ;; - Oracle JDK 8 -- use :inspect/rebl-java8
-  ;; - OpenJDK 8 or 11 -- use :inspect/rebl
+  ;; Requires Cognitect dev-tools https://cognitect.com/dev-tools/index.html
+  ;; - Java 8 -- use :inspect/rebl-java8
+  ;; - Java 11 -- use :inspect/rebl
+  ;; - Other java versions -- update org.openjfx library version to match Java version
 
   :inspect/rebl
   {:extra-deps {com.cognitect/rebl          {:mvn/version "0.9.241"}
@@ -422,13 +423,13 @@
   ;; clojure -M:inspect/reveal:rebel -J-Dvlaaad.reveal.prefs='{:theme :light :font-family "Ubuntu Mono" :font-size 32}'
 
   :inspect/reveal
-  {:extra-deps {vlaaad/reveal {:mvn/version "1.1.159"}}
+  {:extra-deps {vlaaad/reveal {:mvn/version "1.1.164"}}
    :ns-default vlaaad.reveal
    :exec-fn    repl
    :main-opts  ["-m" "vlaaad.reveal" "repl"]}
 
   :inspect/reveal-light
-  {:extra-deps {vlaaad/reveal {:mvn/version "1.1.159"}}
+  {:extra-deps {vlaaad/reveal {:mvn/version "1.1.164"}}
    :ns-default vlaaad.reveal
    :exec-fn    repl
    :jvm-opts   ["-Dvlaaad.reveal.prefs={:theme,:light,:font-family,\"https://ff.static.1001fonts.net/u/b/ubuntu.mono.ttf\",:font-size,32}"]
@@ -442,14 +443,14 @@
   ;; Reveal REPL with nrepl server, connect to from a Clojure aware editor
   ;; clj -M:inspect/reveal-nrepl
   :inspect/reveal-nrepl
-  {:extra-deps {vlaaad/reveal {:mvn/version "1.1.159"}
+  {:extra-deps {vlaaad/reveal {:mvn/version "1.1.164"}
                 nrepl/nrepl   {:mvn/version "0.8.3"}}
    :main-opts  ["-m" "nrepl.cmdline"
                 "--middleware" "[vlaaad.reveal.nrepl/middleware]"]}
 
   ;; Light version of :inspect/reveal-nrepl
   :inspect/reveal-light-nrepl
-  {:extra-deps {vlaaad/reveal {:mvn/version "1.1.159"}
+  {:extra-deps {vlaaad/reveal {:mvn/version "1.1.164"}
                 nrepl/nrepl   {:mvn/version "0.8.3"}}
    :jvm-opts   ["-Dvlaaad.reveal.prefs={:theme,:light,:font-family,\"https://ff.static.1001fonts.net/u/b/ubuntu.mono.ttf\",:font-size,32}"]
    :main-opts  ["-m" "nrepl.cmdline"
@@ -459,7 +460,7 @@
   ;; Use with `C-u cider-jack-in-clj` or `SPC u , '` on Spacemacs
   ;; Edit jack-in command: clojure -M:inspect/reveal-nrepl-cider
   :inspect/reveal-nrepl-cider
-  {:extra-deps {vlaaad/reveal                 {:mvn/version "1.1.159"}
+  {:extra-deps {vlaaad/reveal                 {:mvn/version "1.1.164"}
                 nrepl/nrepl                   {:mvn/version "0.8.3"}
                 cider/cider-nrepl             {:mvn/version "0.25.4"}
                 refactor-nrepl/refactor-nrepl {:mvn/version "2.5.0"}}
@@ -468,7 +469,7 @@
 
   ;; Light version of :inspect/reveal-nrepl-cider
   :inspect/reveal-light-nrepl-cider
-  {:extra-deps {vlaaad/reveal                 {:mvn/version "1.1.159"}
+  {:extra-deps {vlaaad/reveal                 {:mvn/version "1.1.164"}
                 nrepl/nrepl                   {:mvn/version "0.8.3"}
                 cider/cider-nrepl             {:mvn/version "0.25.4"}
                 refactor-nrepl/refactor-nrepl {:mvn/version "2.5.0"}}
@@ -607,6 +608,20 @@
                  {:git/url "https://github.com/cognitect-labs/test-runner.git"
                   :sha     "b6b3193fcc42659d7e46ecd1884a228993441182"}}
    :main-opts   ["-m" "cognitect.test-runner"]}
+
+  ;; Compiling tests before running - automate Ahead of Time compilation
+  ;; Use the above alias and over-ride the :main-opts on the command line
+  ;; clojure -M:test/cognitect -e "(compile, 'your.namespace)" -m cognitect.test-runner
+  ;; Or use the following alias in your project deps.edn
+  ;;Example only - change to specific namespace in :main-opts before use
+  :test/cognitect-precompile
+  {:extra-paths ["test"]
+   :extra-deps  {com.cognitect/test-runner
+                 {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                  :sha     "b6b3193fcc42659d7e46ecd1884a228993441182"}}
+   :main-opts   ["-e" "(compile,'your.namespace-here)"
+                 "-m" "cognitect.test-runner"]}
+
 
   ;; ClojureScript test runner
   ;; https://github.com/Olical/cljs-test-runner

@@ -1,13 +1,15 @@
 ![Practicalli Clojure deps.edn user wide configuration for Clojure projects](https://raw.githubusercontent.com/practicalli/graphic-design/live/practicalli-clojure-deps.png)
 
+# User level configuration for Clojure CLI tools
+[practicalli/clojure-deps-edn](https://github.com/practicalli/clojure-deps-edn) provides a user level configuration, `~/.clojure/deps.edn`, containing over 30 aliases to support Clojure CLI and tools.deps project development.  These aliases use meaningful and descriptive names to avoid clashes with project specific aliases, ensuring that the user wide aliases remain available in all projects.
+
+Aliases with common options are provided for convenience and to minimize the amount of cognitive load required to remember how to use aliases. Initial inspiration taken from [seancorfield/dot-clojure](https://github.com/seancorfield/dot-clojure).
+
+The **[Practicalli Clojure book](https://practicalli.github.io/clojure/clojure-tools/data-browsers/portal.html)** uses this configuration extensively to help you develop Clojure projects and learn the Clojure language.
+
 > MAJOR CHANGES: practicalli/clojure-deps-edn recommends using [Clojure CLI tools](https://clojure.org/guides/getting_started) version 1.10.1.697 or later.
 > Aliases are now qualified keywords, which is recommended in general for using keywords in Clojure.
 > Use the `classic-aliases` tag for the last version of this repository before these changes
-
-
-[practicalli/clojure-deps-edn](https://github.com/practicalli/clojure-deps-edn) provides a user wide configuration, `~/.clojure/deps.edn`, for over 30 aliases to support Clojure CLI and tools.deps project development.  These aliases use meaningful and descriptive names to avoid clashes with project specific aliases, ensuring that the user wide aliases remain available in all projects.
-
-Aliases with common options are provided for convenience and to minimize the amount of cognitive load required to remember how to use aliases. Initial inspiration taken from [seancorfield/dot-clojure](https://github.com/seancorfield/dot-clojure).
 
 # Contents
 * [Installing practicalli/clojure-deps-edn](#installing-practicalli-clojure-deps-edn)
@@ -26,13 +28,22 @@ clojure -Sdescribe
 
 
 # Install Practicalli clojure-deps-edn
-Fork the practicalli/clojure-deps-edn repository and clone your fork to an existing `~/.clojure/` directory (eg. `$HOME/.clojure` or `%HOME%\.clojure`).
+Clojure CLI tools creates a configuration directory called `.clojure`, which [by default](https://clojure.org/reference/deps_and_cli#_deps_edn_sources) is placed in the root of the operating system user account directory, e.g. `$HOME/.clojure`.
+
+`XDG_CONFIG_HOME` may be set by your operating system and over-rides the default location, e.g. `$HOME/.config/.clojure`
+
+`CLJ_CONFIG` can be used to over-ride all other location settings
+
+> Check the location of your Clojure configuration directory by running `clojure -Sdescribe` and checking the `:user-config` value.
+
+
+Fork the practicalli/clojure-deps-edn repository and clone your fork to an existing `.clojure/` directory (eg. `$HOME/.clojure` or `%HOME%\.clojure`).
 
 ```shell
 git clone your-fork-url ~/.clojure/
 ```
 
-The configuration from `~/.clojure/deps.edn` is now available for all Clojure CLI projects for that user account.
+The configuration from `.clojure/deps.edn` is now available for all Clojure CLI projects for that user account.
 
 Any directory containing a `deps.edn` file is considered a Clojure project. A `deps.edn` file can contain an empty hash-map, `{}` or hash-map with configuration.  The project `deps.edn` file is merged with the user wide configuration, with the project `deps.edn` keys taking precedence if there is duplication.
 
@@ -461,6 +472,23 @@ Run clojure with the specific test runner alias: `clojure -A:test-runner-alias`
 | `clojure -M:test/eftest`                    | Fast Clojure test runner, pretty output, parallel tests                                    |
 | `clojure -M:test/coverage`                  | Cloverage clojure.test coverage report                                                     |
 | `clojure -X:test/coverage`                  | Cloverage clojure.test coverage report (clojure exec)                                      |
+
+#### Compiling tests before running - automate Ahead of Time compilation
+Use one of the test runner alias and over-ride the :main-opts on the command line
+```shell
+clojure -M:test/cognitect -e "(compile, 'your.namespace)" -m cognitect.test-runner
+```
+
+Or add the following alias in your project `deps.edn`, changing to the specific namespace in `:main-opts` before use
+```clojure
+  :test/cognitect-precompile
+  {:extra-paths ["test"]
+   :extra-deps  {com.cognitect/test-runner
+                 {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                  :sha     "b6b3193fcc42659d7e46ecd1884a228993441182"}}
+   :main-opts   ["-e" "(compile,'your.namespace-here)"
+                 "-m" "cognitect.test-runner"]}
+```
 
 
 ## Lint tools
